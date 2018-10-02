@@ -21,6 +21,7 @@ define munin::plugin (
     $package_name     = $::munin::params::node::package_name,
     $service_name     = $::munin::params::node::service_name,
     $config_root      = $::munin::params::node::config_root,
+    $file_group       = $::munin::params::node::file_group,
 ) {
 
     include ::munin::node
@@ -78,6 +79,8 @@ define munin::plugin (
         # Install the plugin
         file { $name:
             ensure => $plugin_ensure,
+            owner  => 'root',
+            group  => $file_group,
             path   => $file_path,
             source => $source,
             target => $plugin_target,
