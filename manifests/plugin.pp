@@ -26,8 +26,7 @@ define munin::plugin (
     include ::munin::node
 
     validate_absolute_path($plugin_share_dir)
-    validate_absolute_path($package_name)
-    validate_absolute_path($service_name)
+    validate_absolute_path($config_root)
 
     File {
         require => Package[$package_name],
@@ -75,7 +74,7 @@ define munin::plugin (
 
     if $handle_plugin {
         # Install the plugin
-        file {"${plugin_share_dir}/${name}":
+        file {"${config_root}/${name}":
             ensure => $plugin_ensure,
             source => $source,
             target => $plugin_target,
