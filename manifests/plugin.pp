@@ -17,14 +17,14 @@ define munin::plugin (
     $target='',
     $config=undef,
     $config_label=undef,
-)
-{
+    $plugin_share_dir = $::munin::params::node::plugin_share_dir,
+    $package_name     = $::munin::params::node::package_name,
+    $service_name     = $::munin::params::node::service_name,
+    $config_root      = $::munin::params::node::config_root,
+) {
 
     include ::munin::node
 
-    $plugin_share_dir = $munin::params::node::plugin_share_dir
-    $package_name     = $munin::params::node::package_name
-    $service_name     = $munin::params::node::service_name
     validate_absolute_path($plugin_share_dir)
     validate_absolute_path($package_name)
     validate_absolute_path($service_name)
@@ -85,7 +85,7 @@ define munin::plugin (
 
     # Config
 
-    file{ "${munin::params::node::config_root}/plugin-conf.d/${name}.conf":
+    file{ "${config_root}/plugin-conf.d/${name}.conf":
       ensure  => $config_ensure,
       content => template('munin/plugin_conf.erb'),
     }
