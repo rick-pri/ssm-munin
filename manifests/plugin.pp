@@ -39,10 +39,12 @@ define munin::plugin (
             $handle_plugin = true
             $plugin_ensure = $ensure
             $plugin_target = undef
+            $file_path     = "${plugin_share_dir}"
         }
         'link': {
             $handle_plugin = true
             $plugin_ensure = 'link'
+            $file_path     = "${config_root}/plugins"
             case $target {
                 '': {
                     $plugin_target = "${plugin_share_dir}/${title}"
@@ -74,14 +76,9 @@ define munin::plugin (
 
     if $handle_plugin {
         # Install the plugin
-        if $target != undef {
-          $root = "${config_root}/plugins"
-        } else {
-          $root = $plugin_share_dir
-        }
-
-        file {"${root}/${name}":
+        file { $name:
             ensure => $plugin_ensure,
+            path   => $file_path,
             source => $source,
             target => $plugin_target,
             mode   => '0755',
