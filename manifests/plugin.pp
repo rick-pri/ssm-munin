@@ -12,11 +12,11 @@
 # - config_label: label for munin plugin config
 
 define munin::plugin (
-    $ensure='',
-    $source=undef,
-    $target='',
-    $config=undef,
-    $config_label=undef,
+    $ensure           = '',
+    $target           = '',
+    $source           = undef,
+    $config           = undef,
+    $config_label     = undef,
     $plugin_share_dir = $::munin::params::node::plugin_share_dir,
     $package_name     = $::munin::params::node::package_name,
     $service_name     = $::munin::params::node::service_name,
@@ -39,12 +39,12 @@ define munin::plugin (
             $handle_plugin = true
             $plugin_ensure = $ensure
             $plugin_target = undef
-            $file_path     = "${plugin_share_dir}"
+            $file_path     = "${plugin_share_dir}/${title}"
         }
         'link': {
             $handle_plugin = true
             $plugin_ensure = 'link'
-            $file_path     = "${config_root}/plugins"
+            $file_path     = "${config_root}/plugins/${title}"
             case $target {
                 '': {
                     $plugin_target = "${plugin_share_dir}/${title}"
