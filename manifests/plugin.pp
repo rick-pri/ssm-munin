@@ -22,12 +22,16 @@ define munin::plugin (
 
     include ::munin::node
 
-    $plugin_share_dir=$munin::node::plugin_share_dir
+    $plugin_share_dir = $munin::params::node::plugin_share_dir
+    $package_name     = $munin::node::params::package_name
+    $service_name     = $munin::node::params::service_name
     validate_absolute_path($plugin_share_dir)
+    validate_absolute_path($package_name)
+    validate_absolute_path($service_name)
 
     File {
-        require => Package[$munin::node::package_name],
-        notify  => Service[$munin::node::service_name],
+        require => Package[$package_name],
+        notify  => Service[$service_name],
     }
 
     validate_re($ensure, '^(|link|present|absent)$')
@@ -42,13 +46,13 @@ define munin::plugin (
             $plugin_ensure = 'link'
             case $target {
                 '': {
-                    $plugin_target = "${munin::node::plugin_share_dir}/${title}"
+                    $plugin_target = "${plugin_share_dir}/${title}"
                 }
                 /^\//: {
                     $plugin_target = $target
                 }
                 default: {
-                    $plugin_target = "${munin::node::plugin_share_dir}/${target}"
+                    $plugin_target = "${plugin_share_dir}/${target}"
                 }
             }
             validate_absolute_path($plugin_target)
@@ -71,7 +75,7 @@ define munin::plugin (
 
     if $handle_plugin {
         # Install the plugin
-        file {"${munin::node::config_root}/plugins/${name}":
+        file {"${plugin_share_dir}/${name}":
             ensure => $plugin_ensure,
             source => $source,
             target => $plugin_target,
@@ -81,7 +85,7 @@ define munin::plugin (
 
     # Config
 
-    file{ "${munin::node::config_root}/plugin-conf.d/${name}.conf":
+    file{ "${munin::node::params::config_root}/plugin-conf.d/${name}.conf":
       ensure  => $config_ensure,
       content => template('munin/plugin_conf.erb'),
     }
