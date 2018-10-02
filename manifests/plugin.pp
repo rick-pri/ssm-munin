@@ -74,7 +74,13 @@ define munin::plugin (
 
     if $handle_plugin {
         # Install the plugin
-        file {"${config_root}/${name}":
+        if $target != undef {
+          $root = "${config_root}/plugins"
+        } else {
+          $root = $plugin_share_dir
+        }
+
+        file {"${root}/${name}":
             ensure => $plugin_ensure,
             source => $source,
             target => $plugin_target,
